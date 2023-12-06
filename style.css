@@ -1,0 +1,100 @@
+* {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0px;
+  }
+  #main-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    min-width: 650px;
+  }
+  
+  .product-container {
+    display: flex;
+    flex: 0 0 48%;  
+    margin: 1%;  
+    padding: 10px;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid ;
+    border-radius: 5px;
+  }
+  
+  .top {
+    width: 100%;
+    margin-left: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: fit-content;
+  }
+  
+  .producers-title {
+    padding: 0 5px;
+    font-size: 20px;
+    position: relative;
+    background-color: white;
+    top: 8px;
+  }
+  .icon {
+    user-select: none;
+    font-size: 45px;
+    cursor: pointer;
+  }
+  
+  .counter-container {
+    font-size: 20px;
+  }
+  
+  .UPPUT-container {
+    font-size: 20px;
+  }
+  
+  .bottom {
+    width: 100%;
+    height: 250px;
+    padding: 10px;
+    overflow: auto;
+    border: 1.5px black solid;
+    border-radius: 5px;
+  }
+  
+  .producer {
+    margin-bottom: 5px;
+    padding: 10px;
+    border: 2px solid grey;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .producer button{
+    height: fit-content;
+    padding: 5px;
+  }
+  .producer-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .producer-name {
+    font-size: 18px;
+    color: blue;
+    padding: 5px;
+  }
+
+  .producers-title {
+    background-color: lightgray;
+    padding: 5px;
+    border-radius: 5px;
+  }
+  
+  .producer button {
+    font-size: 15px;
+    width: 50px;
+  }
+  .bought{
+    background-color:aquamarine;
+  }
