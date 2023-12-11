@@ -3,11 +3,16 @@ const data = window.data;
 
 // State
 const state = {
+  keys:[],
   products: [],
 };
 
 // References
 const mainContainer = document.getElementById('main-container');
+const header = document.getElementById('header');
+const dialogBox = document.querySelector('.dialog-box');
+const overlay = document.querySelector('.overlay');
+
 
 // Class declaration
 class Product {
@@ -22,6 +27,7 @@ class Product {
   updateDisplayedCount(){
     const productCounter = document.getElementById(`${this.name}-counter`);
     productCounter.innerText = this.count;
+    this.renderProducers();
   }
 
   updateDisplayedTotalUPPUT(){
@@ -42,7 +48,6 @@ class Product {
   periodicProduction(){
     this.count += this.totalUPPUT;
     this.updateDisplayedCount();
-    this.renderProducers();
   }
 
   deductCost(cost){
@@ -126,15 +131,14 @@ class Product {
     iconEl.textContent = this.icon;
     iconEl.addEventListener('click', () => {
       this.clickProduct();
-      this.renderProducers();
     });
 
     const indicators = document.createElement('div')
     indicators.innerHTML =  `
     <div class="indicators">
         <div class="counter-container">${this.formatName(this.name)}: <span id="${this.name}-counter">0</span></div>
-        <div class="UPPUT-container"><span id="${this.name}-UPPUT">0</span> ${this.name}/month</div>
-    </div>
+        <div class="UPPUT-container"><span id="${this.name}-UPPUT">${this.totalUPPUT}</span> ${this.name}/month</div>
+    </div> 
     `;
 
     const top = document.createElement('div')
@@ -149,22 +153,177 @@ class Product {
     bottom.className = 'bottom'
     bottom.id = `${this.name}-producers` 
 
+    
+
     productContainer.append(top, producersTitle, bottom);
 
     return productContainer;
   }
 }
 
-// Set up the initial state
-function init(){
-  // Create Product instances
-  data.forEach(el => state.products.push(Object.setPrototypeOf(el, Product.prototype)));
-  // OR to preserve data as it is:
-  // data.forEach(el => state.products.push(new Product(el.name, el.count, el.totalUPPUT,el.icon, el.producers) ));
-
-  // set HTML
+//
+function creatHtml(){
   const productContainers = state.products.map(product => product.setHtml());
   mainContainer.replaceChildren(... productContainers);
+}
+
+//
+function saveData(){
+  state.products.forEach(product => localStorage.setItem(`${product.name}`, JSON.stringify(product)));
+}
+
+function  showDialogBox(){
+  dialogBox.classList.add('active');
+  overlay.classList.add('active');
+}
+
+function hideDialogBox(){
+  dialogBox.classList.remove('active');  
+  overlay.classList.remove('active');
+}
+
+//
+function creatDialogBox(message, actionEl){
+  // const message = document.createElement('output');
+  const messageEl = document.createElement('output');
+  messageEl.textContent = message;
+
+  const actionBar = document.createElement('div');
+  actionBar.className = 'action-bar';
+  
+
+  const cancelButton = document.createElement('button');
+  cancelButton.textContent = 'Cancel';
+  cancelButton.id = 'cancel-button';
+  cancelButton.addEventListener('click', () => {
+    isPaused = false;
+    hideDialogBox();
+  });
+
+  actionBar.append(actionEl, cancelButton)
+  dialogBox.replaceChildren(messageEl, actionBar);
+  showDialogBox();
+}
+
+//
+const saveBtn = document.createElement('button');
+header.append(saveBtn);
+saveBtn.textContent = 'Save';
+saveBtn.addEventListener('click', () => {
+  saveData();
+  
+  const okBtn = document.createElement('button');
+  okBtn.textContent = 'OK';
+  okBtn.addEventListener('click', hideDialogBox);
+
+  const message = 'Data has been saved successfully.';
+  creatDialogBox(message, okBtn);
+});
+
+//
+const restoreBtn = document.createElement('button');
+restoreBtn.textContent = 'Restore';
+// restoreBtn.id = 'restore-button';
+header.append(restoreBtn);
+restoreBtn.addEventListener('click', () => {
+  const restoreConfirmBtn = document.createElement('button');
+  restoreConfirmBtn.textContent = 'Restore';
+  // restoreConfirmBtn.id = ``;
+
+  restoreConfirmBtn.addEventListener('click', () => {
+    state.products.length = 0;
+    
+    // try
+    state.keys.forEach(key => {
+      const prdObj = JSON.parse(localStorage.getItem(key));
+      state.products.push(new Product(prdObj.name, prdObj.count, prdObj.totalUPPUT,prdObj.icon, prdObj.producers));
+    });
+    
+    creatHtml();
+    state.products.forEach(product => {
+      product.updateDisplayedTotalUPPUT();
+      product.updateDisplayedCount();
+    });
+
+    hideDialogBox();
+  });
+
+  const message = 'Proceeding with this action may result in the loss of your current data. Are you sure you want to to restore the latest saved data?';
+  creatDialogBox(message, restoreConfirmBtn);
+});
+
+const pauseBtn = document.createElement('button');
+pauseBtn.textContent = 'Pause';
+header.append(pauseBtn);
+
+let isPaused = false;
+pauseBtn.addEventListener('click', () => {
+  isPaused = !isPaused;
+  pauseBtn.classList.toggle('pause', isPaused);
+  pauseBtn.textContent = isPaused ? 'Play' : 'Pause';
+});
+
+//
+const stopBtn = document.createElement('button');
+stopBtn.textContent = 'Stop';
+header.append(stopBtn);
+stopBtn.addEventListener('click', () => {
+  isPaused = true;
+  const saveBtn = document.createElement('button');
+  saveBtn.textContent = 'Save changes';
+  saveBtn.addEventListener('click', () => {
+    saveData();
+    const message = 'Data has been saved, and you have successfully logged out of the application.'
+    logOut(message);
+  });
+
+  const stopConfirmButton = document.createElement('button');
+  stopConfirmButton.textContent = 'Leave without Saving';  
+  stopConfirmButton.addEventListener('click', () => {
+    const message = 'You have successfully logged out of the application.'
+    logOut(message); 
+  });
+
+  const stopConfirmDiv = document.createElement('div');
+  stopConfirmDiv.className = 'stopConfirmDiv'
+  stopConfirmDiv.append(saveBtn, stopConfirmButton);
+
+  // -- title
+  
+  const message = 'You are about to leave this page without saving. All changes will be lost. Do you want to leave without saving?';
+  creatDialogBox(message, stopConfirmDiv);
+  
+});
+
+//
+function logOut(message){
+  
+  // hideDialogBox();
+  header.style.opacity = '0';
+
+  const startBtn = document.createElement('button');
+  startBtn.textContent = 'Start again';
+  startBtn.addEventListener('click', () => location.reload()); //refresh Page
+
+  creatDialogBox(message, startBtn);
+  overlay.classList.add('logOut');
+}
+
+
+//
+// Set up the initial state
+function init(){
+  // Initilize state object 
+  data.forEach(el => {
+    state.keys.push(el.name);
+    state.products.push(Object.setPrototypeOf(el, Product.prototype));
+  });
+  // OR to preserve data as it is:
+  // data.forEach(el => {
+  //   state.keys.push(el.name);
+  //   state.products.push(new Product(el.name, el.count, el.totalUPPUT,el.icon, el.producers) );
+  // });
+  creatHtml();
 }
 
 init();
@@ -172,7 +331,13 @@ init();
 // Periodic step
 function tick() {
     state.products.forEach(product => product.periodicProduction());
+    console.log(state.products)
 }
 
 // Rpeat the tick function every 1000ms, or 1s
-setInterval(() => tick(), 1000);
+setInterval(() =>{
+  if(!isPaused) {
+    tick();  
+  }
+}, 1000);
+

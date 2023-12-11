@@ -1,9 +1,7 @@
 * {
   box-sizing: border-box;
 }
-body {
-  margin: 0px;
-}
+
 #main-container {
   display: flex;
   flex-wrap: wrap;
@@ -22,11 +20,9 @@ body {
   padding: 10px;
 }
 .top{
-  width: 75%;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  background-color:lavender;
   border-radius: 5px;
 }
 .indicators {
@@ -51,7 +47,7 @@ body {
   padding: 5px;
   border-radius: 50%;
   place-items: center;
-  background-color:gainsboro;
+  background-color:lavender;
   border-radius: 5px;
 
 }
@@ -104,7 +100,56 @@ body {
 .producer button {
   font-size: 15px;
   width: 50px;
+  cursor: pointer;
 }
 .bought{
   background-color:aquamarine;
+}
+
+/* -- */
+
+.dialog-box {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: 200ms ease-in-out;
+  border: 1px solid black;
+  border-radius: 10px;
+  z-index: 10;
+  background-color: white;
+  max-width: 50%;
+  height: 120px;
+  font-size: 18px;
+  padding: 10px;
+}
+
+.dialog-box.active {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.overlay {
+position: fixed;
+opacity: 0;
+transition: 200ms ease-in-out;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: rgba(0, 0, 0, .5);
+pointer-events: none;
+}
+
+.overlay.active {
+opacity: 1;
+pointer-events: all;
+}
+
+.overlay.logOut{
+  background-color: lightgray;
+}
+
+
+.pause{
+  background-color:lightcoral;
 }
