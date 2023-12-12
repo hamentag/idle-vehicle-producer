@@ -5,6 +5,7 @@ const data = window.data;
 const state = {
   keys:[],
   products: [],
+  storage: [],
 };
 
 // References
@@ -155,8 +156,6 @@ class Product {
     bottom.className = 'bottom'
     bottom.id = `${this.name}-producers` 
 
-    
-
     productContainer.append(top, producersTitle, bottom);
 
     return productContainer;
@@ -217,13 +216,26 @@ saveBtn.addEventListener('click', () => {
   
   const okBtn = document.createElement('button');
   okBtn.textContent = 'OK';
- 
   okBtn.addEventListener('click', hideDialogBox);
 
   const message = 'Data has been saved successfully.';
   creatDialogBox(message, okBtn);
 });
-
+//
+////////////////////////////////
+function hasGotData(){
+  for(let key of state.keys){
+    const prdObj = JSON.parse(localStorage.getItem(key));
+      if(prdObj === null){
+        return false;
+      }
+      else{
+        console.log("this one done perfectly...");
+        state.storage.push(new Product(prdObj.name, prdObj.count, prdObj.totalUPPUT,prdObj.icon, prdObj.producers));
+      }
+  }
+  return true;
+}
 //
 const restoreBtn = document.createElement('button');
 restoreBtn.textContent = 'Restore';
@@ -235,25 +247,31 @@ restoreBtn.addEventListener('click', () => {
   // restoreConfirmBtn.id = ``;
 
   restoreConfirmBtn.addEventListener('click', () => {
-    state.products.length = 0;
+    let rsltMsg = '';
+    state.storage.length = 0;
     
-    // try
-    state.keys.forEach(key => {
-      const prdObj = JSON.parse(localStorage.getItem(key));
-      state.products.push(new Product(prdObj.name, prdObj.count, prdObj.totalUPPUT,prdObj.icon, prdObj.producers));
-    });
-    
+    if(hasGotData()){
+      state.products.length = 0;
+      state.products.push(...state.storage);
+      rsltMsg = 'Data has been uploaded successfully!'
+    }
+    else{
+      rsltMsg = 'Oops, something went wrong with restoring data!'
+    }
+    const okBtn = document.createElement('button');
+    okBtn.textContent = 'OK';
+    okBtn.addEventListener('click', hideDialogBox);
+    creatDialogBox(rsltMsg, okBtn);
+
     creatHtml();
     state.products.forEach(product => {
       product.updateDisplayedTotalUPPUT();
       product.updateDisplayedCount();
-    });
-
-    hideDialogBox();
+    });   
   });
 
-  const message = 'Proceeding with this action may result in the loss of your current data. Are you sure you want to to restore the latest saved data?';
-  creatDialogBox(message, restoreConfirmBtn);
+  const clarifMsg = 'Proceeding with this action may result in the loss of your current data. Are you sure you want to to restore the latest saved data?';
+  creatDialogBox(clarifMsg, restoreConfirmBtn);
 });
 
 const pausePlayBtn = document.createElement('button');

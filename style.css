@@ -107,7 +107,7 @@ span  {
   width: 50px;
   padding: 5px;
   margin: 15px 10px;
-  background-color:azure;
+  background-color: white;
   border: 1px solid gray;
   border-radius: 4px;
 
@@ -153,7 +153,9 @@ span  {
   border-radius: 10px;
   z-index: 10;
   background-color: rgb(238, 239, 238);
-  width: fit-content;
+  /* width: fit-content; */
+  min-width: 425px;
+
   height: fit-content;
   font-size: 18px;
   padding: 10px 0 0 0;
@@ -205,7 +207,7 @@ button:not(#header button):hover {
 }
 
 #header button:hover {
-  background-color:rgb(244, 243, 223);
+  background-color:rgb(241, 239, 185);
 }
 
 .overlay {
