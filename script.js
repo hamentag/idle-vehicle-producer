@@ -13,7 +13,6 @@ const header = document.getElementById('header');
 const dialogBox = document.querySelector('.dialog-box');
 const overlay = document.querySelector('.overlay');
 
-
 // Class declaration
 class Product {
   constructor(_name, _count, _totalUPPUT, _icon, _producers){
@@ -72,15 +71,18 @@ class Product {
       if(producer.unlocked){
         const containerDiv = document.createElement("div");
         containerDiv.className = "producer";
-        if(producer.qty > 0)
+        if(producer.qty > 0){
           containerDiv.classList.add('bought');
+          containerDiv.style.backgroundColor = `rgba(80, 220, 150, ${producer.qty / 5})`
+        }
+    
         const producerHtml = `
         <div class="producer-column">
           <div class="producer-name">${this.formatName(producer.id)}</div>
         </div>
         <div class="producer-column">
           <div>Quantity: ${producer.qty}</div>
-          <div>Unit/second: ${producer.upput}</div>
+          <div>Unit/month: ${producer.upput}</div>
           <div>Cost: ${producer.price} Unit</div>
         </div>
         `;
@@ -190,17 +192,18 @@ function creatDialogBox(message, actionEl){
 
   const actionBar = document.createElement('div');
   actionBar.className = 'action-bar';
-  
+  actionBar.append(actionEl);
 
-  const cancelButton = document.createElement('button');
-  cancelButton.textContent = 'Cancel';
-  cancelButton.id = 'cancel-button';
-  cancelButton.addEventListener('click', () => {
-    isPaused = false;
-    hideDialogBox();
-  });
-
-  actionBar.append(actionEl, cancelButton)
+  if(!hasLogOut){
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = 'Cancel';
+    cancelButton.id = 'cancel-button';
+    cancelButton.addEventListener('click', () => {
+      isPaused = false;
+      hideDialogBox();
+    });
+    actionBar.append(cancelButton);
+  }
   dialogBox.replaceChildren(messageEl, actionBar);
   showDialogBox();
 }
@@ -214,6 +217,7 @@ saveBtn.addEventListener('click', () => {
   
   const okBtn = document.createElement('button');
   okBtn.textContent = 'OK';
+ 
   okBtn.addEventListener('click', hideDialogBox);
 
   const message = 'Data has been saved successfully.';
@@ -252,15 +256,17 @@ restoreBtn.addEventListener('click', () => {
   creatDialogBox(message, restoreConfirmBtn);
 });
 
-const pauseBtn = document.createElement('button');
-pauseBtn.textContent = 'Pause';
-header.append(pauseBtn);
+const pausePlayBtn = document.createElement('button');
+pausePlayBtn.textContent = 'Pause';
+pausePlayBtn.classList.add('play');
+
+header.append(pausePlayBtn);
 
 let isPaused = false;
-pauseBtn.addEventListener('click', () => {
+pausePlayBtn.addEventListener('click', () => {
   isPaused = !isPaused;
-  pauseBtn.classList.toggle('pause', isPaused);
-  pauseBtn.textContent = isPaused ? 'Play' : 'Pause';
+  pausePlayBtn.classList.toggle('play', !isPaused);  // toggle(token, force)
+  pausePlayBtn.textContent = isPaused ? 'Play' : 'Pause';
 });
 
 //
@@ -271,6 +277,7 @@ stopBtn.addEventListener('click', () => {
   isPaused = true;
   const saveBtn = document.createElement('button');
   saveBtn.textContent = 'Save changes';
+
   saveBtn.addEventListener('click', () => {
     saveData();
     const message = 'Data has been saved, and you have successfully logged out of the application.'
@@ -287,8 +294,6 @@ stopBtn.addEventListener('click', () => {
   const stopConfirmDiv = document.createElement('div');
   stopConfirmDiv.className = 'stopConfirmDiv'
   stopConfirmDiv.append(saveBtn, stopConfirmButton);
-
-  // -- title
   
   const message = 'You are about to leave this page without saving. All changes will be lost. Do you want to leave without saving?';
   creatDialogBox(message, stopConfirmDiv);
@@ -296,19 +301,15 @@ stopBtn.addEventListener('click', () => {
 });
 
 //
+let hasLogOut = false;
 function logOut(message){
-  
-  // hideDialogBox();
-  header.style.opacity = '0';
-
+  hasLogOut = true;
   const startBtn = document.createElement('button');
   startBtn.textContent = 'Start again';
   startBtn.addEventListener('click', () => location.reload()); //refresh Page
-
   creatDialogBox(message, startBtn);
   overlay.classList.add('logOut');
 }
-
 
 //
 // Set up the initial state
@@ -331,7 +332,6 @@ init();
 // Periodic step
 function tick() {
     state.products.forEach(product => product.periodicProduction());
-    console.log(state.products)
 }
 
 // Rpeat the tick function every 1000ms, or 1s
@@ -340,4 +340,3 @@ setInterval(() =>{
     tick();  
   }
 }, 1000);
-
