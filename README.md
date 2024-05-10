@@ -6,3 +6,6 @@ Features:
 * Automated Producers: Acquire and upgrade automated production units to streamline your resource-gathering process. Each producer contributes to your empire's growth even when you're offline.
 * Strategic Decision-Making: Make crucial decisions on resource allocation and upgrades to optimize your production chain. Invest wisely to unlock advanced technologies and increase efficiency.
 * Unlockable Producers: Explore a variety of vehicle producers. Unlock new producer types as you progress, each offering unique bonuses to your production.
+* Pause and Resume: Take a break anytime during your journey. Pause the game and resume your progress whenever you're ready to continue.
+* Stop Game: Stop the game and rest assured that your progress is safely preserved.
+* Save Game: Never lose your hard-earned achievements. Save your game at any point and pick up right where you left off.
