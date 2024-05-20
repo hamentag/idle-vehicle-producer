@@ -6,6 +6,24 @@ body {
   background-color: rgb(243, 242, 242);
 }
 
+#gitHub-repo{
+  width:fit-content;
+  display: flex;
+}
+#gitHub-repo svg{
+  fill: white;
+  width: 25px;
+  height: 25px;
+}
+
+#gitHub-repo a{
+  font-size: 20px; 
+  text-decoration: none; 
+  width:150px; 
+  display: flex; 
+  gap: 5px;
+}
+
 #header {
   position: fixed;
   left: 0;
